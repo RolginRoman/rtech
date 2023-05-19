@@ -1,0 +1,35 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Fluid Design Utopia [rtech]">
+  <main>
+    <h1>Fluid Design <span class="text-gradient">Astro</span> Integration</h1>
+    <p>⬆️ Resize window and observe text size and spacing for this h1 above</p>
+  </main>
+</Layout>
+
+<style>
+  main {
+    margin: auto;
+    padding: 1.5rem;
+    max-width: 60ch;
+  }
+
+  h1 {
+    font-size: var(--step-1);
+    margin-bottom: var(--space-s);
+  }
+
+  p {
+    font-size: var(--step--2);
+  }
+
+  .text-gradient {
+    background-image: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 400%;
+    background-position: 0%;
+  }
+</style>

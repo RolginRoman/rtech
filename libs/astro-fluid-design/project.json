@@ -1,0 +1,12 @@
+{
+  "name": "libs-astro-fluid-design",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/libs/astro-fluid-design",
+  "projectType": "library",
+  "targets": {
+    "check": {
+      "executor": "@nxtensions/astro:check"
+    }
+  },
+  "tags": ["astro"]
+}

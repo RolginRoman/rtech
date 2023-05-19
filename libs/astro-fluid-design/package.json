@@ -1,0 +1,17 @@
+{
+  "name": "@rtech/astro-fluid-design",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "keywords": [
+    "astro-component"
+  ],
+  "peerDependencies": {
+    "astro": "^2.0.0"
+  }
+}

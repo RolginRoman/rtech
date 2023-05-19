@@ -1,7 +1,8 @@
 {
   "recommendations": [
-    
     "nrwl.angular-console",
-    "esbenp.prettier-vscode"
+    "esbenp.prettier-vscode",
+    "astro-build.astro-vscode",
+    "angular.ng-template"
   ]
 }

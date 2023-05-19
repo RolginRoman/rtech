@@ -8,6 +8,10 @@ tmp
 # dependencies
 node_modules
 
+# package manager
+.yarn/cache
+.yarn/install-state.gz
+
 # IDEs and editors
 /.idea
 .project
@@ -18,7 +22,7 @@ node_modules
 *.sublime-workspace
 
 # IDE - VSCode
-.vscode/*
+.vscode
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
@@ -37,3 +41,5 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+.astro
