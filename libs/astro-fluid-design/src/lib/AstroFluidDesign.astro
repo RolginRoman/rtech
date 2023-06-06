@@ -1,272 +1,34 @@
 ---
-const scaleSteps = {
-  'minor-second': 1.067,
-  'major-second': 1.125,
-  'minor-third': 1.2,
-  'major-third': 1.25,
-  'perfect-fourth': 1.333,
-  'augmented-fourth': 1.414,
-  'perfect-fifth': 1.5,
-  'golden-ratio': 1.618,
-  'major-sixth': 1.667,
-  'minor-seventh': 1.778,
-  'major-seventh': 1.875,
-  octave: 2,
-} as const;
+import {
+  Configuration,
+  FluidDesignSystemCSSInput,
+  FluidDesignSystemConfig,
+} from './interface.provider';
+import { DEFAULT_CONFIG } from './config.provider';
+import { buildFluidDesignSystem, generateCSS } from './fluid-design.builder';
 
-type TypeScaleNames = keyof typeof scaleSteps;
-
-type FluidDesignSystemConfig = {
-  minViewport: {
-    width: number;
-    fontSize: number;
-    typeScale: TypeScaleNames;
-  };
-  maxViewport: {
-    width: number;
-    fontSize: number;
-    typeScale: TypeScaleNames;
-  };
-  typeScaleSteps: number[];
-  spaceSteps: Record<string, number>;
-  spacePairs: Record<string, string>;
-  customPairs: Record<string, string>;
-};
-
-type ClampedValue = { clamp: string; min: number; max: number };
-
-type FluidDesignSystemCSSInput = {
-  typeScale: { [stepName: number]: ClampedValue };
-  spaceSteps: { [stepName: string]: ClampedValue };
-  spacePairs: { [stepName: string]: ClampedValue };
-  customPairs: { [stepName: string]: ClampedValue };
-};
-
-const systemConfigRaw = [
-  320,
-  34,
-  'minor-third',
-  1400,
-  52,
-  'major-third',
-] as const;
-
-const config = {
-  minViewport: {
-    width: systemConfigRaw[0],
-    fontSize: systemConfigRaw[1],
-    typeScale: systemConfigRaw[2],
-  },
-  maxViewport: {
-    width: systemConfigRaw[3],
-    fontSize: systemConfigRaw[4],
-    typeScale: systemConfigRaw[5],
-  },
-  typeScaleSteps: [-5, 5],
-  spaceSteps: {
-    '-3XS': 0.25,
-    '-2XS': 0.5,
-    '-XS': 0.75,
-    '-S': 1,
-    '-M': 1.5,
-    '-L': 2,
-    '-XL': 3,
-    '-2XL': 4,
-    '-3XL': 6,
-    '-4XL': 8,
-  },
-  spacePairs: {
-    '-3XS': '-2XS',
-    '-2XS': '-XS',
-    '-XS': '-S',
-    '-S': '-M',
-    '-M': '-L',
-    '-L': '-XL',
-    '-XL': '-2XL',
-    '-2XL': '-3XL',
-  },
-  customPairs: {},
-};
-
-function round(num: number): number {
-  return Math.round(num * 100) / 100;
+interface Props {
+  injectSelector?: string;
+  postprocess?: (css: string) => string;
+  config: Configuration;
 }
 
-function clampBuilder(
-  minWidthPx: number,
-  maxWidthPx: number,
-  minSizePx: number,
-  maxSizePx: number
-) {
-  const pixelsPerRem = 16;
+const {
+  injectSelector = 'html',
+  postprocess = (css: string) => css,
+  config: userConfig,
+} = Astro.props;
 
-  const minWidth = minWidthPx / pixelsPerRem;
-  const maxWidth = maxWidthPx / pixelsPerRem;
-
-  const minSize = minSizePx / pixelsPerRem;
-  const maxSize = maxSizePx / pixelsPerRem;
-
-  const slope = (maxSize - minSize) / (maxWidth - minWidth);
-  const yAxisIntersection = -minWidth * slope + minSize;
-
-  const min = `${round(minSize)}rem`;
-  const val = `${round(yAxisIntersection)}rem + ${round(slope * 100)}vw`;
-  const max = `${round(maxSize)}rem`;
-
-  return `clamp(${min}, calc(${val}), ${max})`;
+function createEffectiveConfig(
+  userConfig: Configuration
+): FluidDesignSystemConfig {
+  return { ...DEFAULT_CONFIG, ...userConfig };
 }
 
-function generateCSS(
-  system: FluidDesignSystemCSSInput,
-  injectSelector = 'html'
-) {
-  let css = '';
-
-  const { typeScale, spaceSteps, spacePairs, customPairs } = system;
-
-  for (const [step, { clamp }] of Object.entries(typeScale)) {
-    css += `--step-${step}: ${clamp};`;
-  }
-
-  for (const [step, { clamp }] of Object.entries(spaceSteps)) {
-    css += `--space${step.toLowerCase()}: ${clamp};`;
-  }
-
-  for (const [step, { clamp }] of Object.entries(spacePairs)) {
-    css += `--space${step.toLowerCase()}: ${clamp};`;
-  }
-
-  for (const [step, { clamp }] of Object.entries(customPairs)) {
-    css += `--space${step.toLowerCase()}: ${clamp};`;
-  }
-
-  return `
-    :where(${injectSelector}) {
-      ${css}
-    }
-  `;
-}
-
-function buildFluidDesignSystem(
-  opts: FluidDesignSystemConfig
-): FluidDesignSystemCSSInput {
-  const {
-    minViewport,
-    maxViewport,
-    typeScaleSteps,
-    spaceSteps,
-    spacePairs,
-    customPairs,
-  } = opts;
-
-  const system: FluidDesignSystemCSSInput = {
-    typeScale: {},
-    spaceSteps: {},
-    spacePairs: {},
-    customPairs: {},
-  };
-
-  if (typeScaleSteps.length) {
-    const minFluidTypeStep = typeScaleSteps[0];
-    const maxFluidTypeStep = typeScaleSteps[typeScaleSteps.length - 1];
-
-    if (minFluidTypeStep && maxFluidTypeStep) {
-      for (let i = minFluidTypeStep; i <= maxFluidTypeStep; i++) {
-        const valueMin = round(
-          minViewport.fontSize * Math.pow(scaleSteps[minViewport.typeScale], i)
-        );
-        const valueMax = round(
-          maxViewport.fontSize * Math.pow(scaleSteps[maxViewport.typeScale], i)
-        );
-
-        system.typeScale[i] = {
-          min: valueMin,
-          max: valueMax,
-          clamp: clampBuilder(
-            minViewport.width,
-            maxViewport.width,
-            valueMin,
-            valueMax
-          ),
-        };
-      }
-    } else {
-      console.error(`For fluid type scales 'typeScaleSteps' must be set `);
-    }
-  }
-
-  if (system.typeScale[0]) {
-    for (const step of Object.keys(spaceSteps)) {
-      const stepValue = spaceSteps[step];
-      if (!stepValue) {
-        continue;
-      }
-      const valueMin = round(system.typeScale[0].min * stepValue);
-      const valueMax = round(system.typeScale[0].max * stepValue);
-      system.spaceSteps[step] = {
-        min: valueMin,
-        max: valueMax,
-        clamp: clampBuilder(
-          minViewport.width,
-          maxViewport.width,
-          valueMin,
-          valueMax
-        ),
-      };
-    }
-  }
-
-  for (const [min, max] of Object.entries(spacePairs)) {
-    const minSpaceStep = system.spaceSteps[min];
-    const maxSpaceStep = system.spaceSteps[max];
-    if (!minSpaceStep || !maxSpaceStep) {
-      throw new Error(
-        `space steps isn't available for spacePair: ${min}, ${max}`
-      );
-    }
-    const valueMin = minSpaceStep.min;
-    const valueMax = maxSpaceStep.max;
-    system.spacePairs[`${min}${max}`] = {
-      min: valueMin,
-      max: valueMax,
-      clamp: clampBuilder(
-        minViewport.width,
-        maxViewport.width,
-        valueMin,
-        valueMax
-      ),
-    };
-  }
-
-  for (const [min, max] of Object.entries(customPairs)) {
-    const minSpaceStep = system.spaceSteps[min];
-    const maxSpaceStep = system.spaceSteps[max];
-    if (!minSpaceStep || !maxSpaceStep) {
-      throw new Error(
-        `space steps isn't available for customPair: ${min}, ${max}`
-      );
-    }
-    const valueMin = minSpaceStep.min;
-    const valueMax = maxSpaceStep.max;
-    system.customPairs[`${min}${max}`] = {
-      min: valueMin,
-      max: valueMax,
-      clamp: clampBuilder(
-        minViewport.width,
-        maxViewport.width,
-        valueMin,
-        valueMax
-      ),
-    };
-  }
-
-  return system;
-}
-
-const fluidDesignSystem: FluidDesignSystemCSSInput =
-  buildFluidDesignSystem(config);
-
-const { injectSelector = 'html' } = Astro.props;
+const fluidDesignSystem: FluidDesignSystemCSSInput = buildFluidDesignSystem(
+  createEffectiveConfig(userConfig)
+);
 ---
 
-<style set:html={generateCSS(fluidDesignSystem, injectSelector)}></style>
+<style set:html={postprocess(generateCSS(fluidDesignSystem, injectSelector))}
+></style>

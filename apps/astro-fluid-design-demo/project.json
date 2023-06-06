@@ -2,7 +2,7 @@
   "name": "apps-astro-fluid-design-demo",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/apps/astro-fluid-design-demo/src",
+  "sourceRoot": "apps/astro-fluid-design-demo/src",
   "targets": {
     "build": {
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],

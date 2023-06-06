@@ -3,6 +3,6 @@
     "nrwl.angular-console",
     "esbenp.prettier-vscode",
     "astro-build.astro-vscode",
-    "angular.ng-template"
+    "dbaeumer.vscode-eslint"
   ]
 }
