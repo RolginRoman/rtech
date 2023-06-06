@@ -1,17 +1,36 @@
 {
   "name": "@rtech/astro-fluid-design",
+  "description": "An Astro Component for integration with Fluid Design System [utopia]",
   "version": "0.0.1",
   "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
+  "homepage": "https://github.com/RolginRoman/rtech/",
+  "license": "MIT",
+  "author": {
+    "name": "Roman Rolgin",
+    "email": "irolgin@gmail.com",
+    "url": "https://github.com/RolginRoman/"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RolginRoman/rtech.git"
+  },
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "types": "dist/index.d.ts",
   "files": [
     "src"
   ],
   "keywords": [
-    "astro-component"
+    "astro",
+    "withastro",
+    "ui",
+    "astro-component",
+    "astro-integration",
+    "fluid design",
+    "utopia.fyi"
   ],
   "peerDependencies": {
-    "astro": "^2.0.0"
+    "astro": "^2.5.0"
   }
 }

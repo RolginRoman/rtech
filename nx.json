@@ -3,6 +3,13 @@
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"]
+    },
+    "lint": {
+      "inputs": [
+        "default",
+        "{workspaceRoot}/.eslintrc.json",
+        "{workspaceRoot}/.eslintignore"
+      ]
     }
   },
   "tasksRunnerOptions": {
@@ -13,6 +20,5 @@
         "accessToken": "ZjFmZWIxMTMtNTVlMC00ZjA1LWEwMDYtMDUzMmQyMzdhYzg1fHJlYWQtd3JpdGU="
       }
     }
-  },
-  "defaultProject": "apps-astro-fluid-design-demo"
+  }
 }
