@@ -1,6 +1,6 @@
 # Astro Fluid Design
 
-![npm](https://img.shields.io/npm/v/%40rtech-public/astro-fluid-design)
+[![npm](https://img.shields.io/npm/v/%40rtech-public/astro-fluid-design?style=flat-square&logo=npm&color=%236ef34d)](https://www.npmjs.com/package/@rtech-public/astro-fluid-design)
 
 <img src="https://raw.githubusercontent.com/RolginRoman/rtech/main/assets/astrologo.svg" width="44" height="44" />
 
