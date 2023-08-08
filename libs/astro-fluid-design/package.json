@@ -1,5 +1,5 @@
 {
-  "name": "@rtech/astro-fluid-design",
+  "name": "@rtech-public/astro-fluid-design",
   "description": "An Astro Component for integration with Fluid Design System [utopia]",
   "version": "0.0.1",
   "type": "module",
@@ -14,12 +14,12 @@
     "type": "git",
     "url": "git+https://github.com/RolginRoman/rtech.git"
   },
+  "main": "./index.ts",
   "exports": {
-    ".": "./src/index.js"
+    ".": "./index.ts"
   },
-  "types": "dist/index.d.ts",
   "files": [
-    "src"
+    "./"
   ],
   "keywords": [
     "astro",
@@ -32,5 +32,6 @@
   ],
   "peerDependencies": {
     "astro": "^2.5.0"
-  }
+  },
+  "devDependencies": {}
 }

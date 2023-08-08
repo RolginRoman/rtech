@@ -1,5 +1,6 @@
 
-import { FluidDesignSystemCSSInput, FluidDesignSystemConfig, scaleSteps } from './interface.provider';
+import { Configuration, FluidDesignSystemCSSInput, FluidDesignSystemConfig, scaleSteps } from './interface.provider';
+import { DEFAULT_CONFIG } from './config.provider';
 
 function round(num: number): number {
     return Math.round(num * 100) / 100;
@@ -29,38 +30,13 @@ function clampBuilder(
     return `clamp(${min}, calc(${val}), ${max})`;
 }
 
-export function generateCSS(
-    system: FluidDesignSystemCSSInput,
-    injectSelector = 'html'
-) {
-    let css = '';
-
-    const { typeScale, spaceSteps, spacePairs, customPairs } = system;
-
-    for (const [step, { clamp }] of Object.entries(typeScale)) {
-        css += `--step-${step}: ${clamp};`;
-    }
-
-    for (const [step, { clamp }] of Object.entries(spaceSteps)) {
-        css += `--space${step.toLowerCase()}: ${clamp};`;
-    }
-
-    for (const [step, { clamp }] of Object.entries(spacePairs)) {
-        css += `--space${step.toLowerCase()}: ${clamp};`;
-    }
-
-    for (const [step, { clamp }] of Object.entries(customPairs)) {
-        css += `--space${step.toLowerCase()}: ${clamp};`;
-    }
-
-    return `
-      :where(${injectSelector}) {
-        ${css}
-      }
-    `;
+function createEffectiveConfig(
+    userConfig: Configuration
+): FluidDesignSystemConfig {
+    return { ...DEFAULT_CONFIG, ...userConfig };
 }
 
-export function buildFluidDesignSystem(
+function buildFluidDesignSystem(
     opts: FluidDesignSystemConfig
 ): FluidDesignSystemCSSInput {
     const {
@@ -174,4 +150,37 @@ export function buildFluidDesignSystem(
     }
 
     return system;
+}
+
+export function generateCSS(
+    config: Configuration,
+    injectSelector = 'html'
+) {
+    const system = buildFluidDesignSystem(createEffectiveConfig(config));
+
+    let css = '';
+
+    const { typeScale, spaceSteps, spacePairs, customPairs } = system;
+
+    for (const [step, { clamp }] of Object.entries(typeScale)) {
+        css += `--step-${step}: ${clamp};`;
+    }
+
+    for (const [step, { clamp }] of Object.entries(spaceSteps)) {
+        css += `--space${step.toLowerCase()}: ${clamp};`;
+    }
+
+    for (const [step, { clamp }] of Object.entries(spacePairs)) {
+        css += `--space${step.toLowerCase()}: ${clamp};`;
+    }
+
+    for (const [step, { clamp }] of Object.entries(customPairs)) {
+        css += `--space${step.toLowerCase()}: ${clamp};`;
+    }
+
+    return `
+      :where(${injectSelector}) {
+        ${css}
+      }
+    `;
 }

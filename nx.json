@@ -1,5 +1,8 @@
 {
   "plugins": ["@nxtensions/astro"],
+  "cli": {
+    "packageManager": "yarn"
+  },
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"]
@@ -10,14 +13,23 @@
         "{workspaceRoot}/.eslintrc.json",
         "{workspaceRoot}/.eslintignore"
       ]
+    },
+    "test": {
+      "inputs": ["default", "^default"]
     }
   },
   "tasksRunnerOptions": {
     "default": {
-      "runner": "nx-cloud",
+      "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e", "check"],
-        "accessToken": "ZjFmZWIxMTMtNTVlMC00ZjA1LWEwMDYtMDUzMmQyMzdhYzg1fHJlYWQtd3JpdGU="
+        "cacheableOperations": [
+          "prebuild",
+          "build",
+          "lint",
+          "test",
+          "e2e",
+          "check"
+        ]
       }
     }
   }
