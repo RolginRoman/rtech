@@ -1,4 +1,3 @@
-
 export const scaleSteps = {
   'minor-second': 1.067,
   'major-second': 1.125,

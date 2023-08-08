@@ -1,11 +1,34 @@
 {
-  "name": "libs-astro-fluid-design",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "name": "lib-astro-fluid-design",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/astro-fluid-design",
   "projectType": "library",
   "targets": {
     "check": {
       "executor": "@nxtensions/astro:check"
+    },
+    "prebuild": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "libs/astro-fluid-design/dist"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["prebuild"],
+      "options": {
+        "commands": [
+          "cp -r libs/astro-fluid-design/src/ libs/astro-fluid-design/dist",
+          "cp libs/astro-fluid-design/README.md libs/astro-fluid-design/dist",
+          "cp libs/astro-fluid-design/package.json libs/astro-fluid-design/dist"
+        ],
+        "outputPath": "libs/astro-fluid-design/dist"
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs lib-astro-fluid-design {args.ver} {args.tag} {args.pack}",
+      "dependsOn": ["build"]
     }
   },
   "tags": ["astro"]

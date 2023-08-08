@@ -4,11 +4,10 @@
   "license": "MIT",
   "private": true,
   "devDependencies": {
-    "@nrwl/cypress": "^16.2.1",
+    "@astrojs/ts-plugin": "^1.0.7",
     "@nrwl/devkit": "^16.2.1",
     "@nrwl/js": "^16.2.1",
     "@nrwl/linter": "^16.2.1",
-    "@nx/cypress": "^16.2.1",
     "@nx/devkit": "^16.2.1",
     "@nx/eslint-plugin": "^16.2.1",
     "@nx/js": "^16.3.2",
@@ -17,15 +16,24 @@
     "@nx/vite": "^16.2.1",
     "@nx/workspace": "16.2.1",
     "@nxtensions/astro": "^3.5.0",
+    "@types/node": "18.7.1",
     "astro": "^2.0.0",
+    "jsdom": "~20.0.3",
     "nx": "16.2.1",
-    "nx-cloud": "latest",
     "prettier": "^2.6.2",
     "tslib": "^2.5.2",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "vite": "^4.3.4",
+    "vite-plugin-copy-files": "^1.1.1",
+    "vite-plugin-dts": "~1.7.1",
+    "vite-plugin-eslint": "^1.8.1",
+    "vite-tsconfig-paths": "^4.0.2"
   },
   "packageManager": "yarn@3.5.1",
   "scripts": {
     "postinstall": "node ./tools/scripts/patch-nx-cli.js"
+  },
+  "dependencies": {
+    "@swc/helpers": "~0.5.0"
   }
 }

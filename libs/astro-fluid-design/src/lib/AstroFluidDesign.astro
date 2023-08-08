@@ -1,11 +1,6 @@
 ---
-import {
-  Configuration,
-  FluidDesignSystemCSSInput,
-  FluidDesignSystemConfig,
-} from './interface.provider';
-import { DEFAULT_CONFIG } from './config.provider';
-import { buildFluidDesignSystem, generateCSS } from './fluid-design.builder';
+import { generateCSS } from './fluid-design.builder';
+import type { Configuration } from './interface.provider';
 
 interface Props {
   injectSelector?: string;
@@ -16,19 +11,9 @@ interface Props {
 const {
   injectSelector = 'html',
   postprocess = (css: string) => css,
-  config: userConfig,
+  config,
 } = Astro.props;
 
-function createEffectiveConfig(
-  userConfig: Configuration
-): FluidDesignSystemConfig {
-  return { ...DEFAULT_CONFIG, ...userConfig };
-}
-
-const fluidDesignSystem: FluidDesignSystemCSSInput = buildFluidDesignSystem(
-  createEffectiveConfig(userConfig)
-);
+const output = postprocess(generateCSS(config, injectSelector));
 ---
-
-<style set:html={postprocess(generateCSS(fluidDesignSystem, injectSelector))}
-></style>
+<style set:html={output}></style>

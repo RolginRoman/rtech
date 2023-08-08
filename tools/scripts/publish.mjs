@@ -1,17 +1,10 @@
-/**
- * This is a minimal script to publish your package to "npm".
- * This is meant to be used as-is or customize as you see fit.
- *
- * This script is executed on "dist/path/to/library" as "cwd" by default.
- *
- * You might need to authenticate with NPM before running this script.
- */
-
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync } from 'fs';
 import chalk from 'chalk';
-
 import devkit from '@nx/devkit';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
+
 const { readCachedProjectGraph } = devkit;
 
 function invariant(condition, message) {
@@ -23,13 +16,32 @@ function invariant(condition, message) {
 
 // Executing publish script: node path/to/publish.mjs {name} --version {version} --tag {tag}
 // Default "tag" to "next" so we won't publish the "latest" tag by accident.
-const [, , name, version, tag = 'next'] = process.argv;
+// const [, , name, version, tag = 'next'] = process.argv;
+
+const argv = yargs(hideBin(process.argv))
+  .command('publish <name> <packageVersion> <tag> <dryRun>')
+  .option('name', {
+    type: 'string',
+    description: 'Package name',
+  })
+  .option('packageVersion', {
+    type: 'string',
+    description: 'Package version',
+  })
+  .option('tag', { type: 'string', default: 'next' })
+  .option('dryRun', {
+    alias: 'pack',
+    type: 'boolean',
+    coerce: (value) => value === 'true',
+  }).argv;
+
+const [name, packageVersion, tag = 'next', dryRun] = argv._;
 
 // A simple SemVer validation to validate the version
 const validVersion = /^\d+\.\d+\.\d+(-\w+\.\d+)?/;
 invariant(
-  version && validVersion.test(version),
-  `No version provided or version did not match Semantic Versioning, expected: #.#.#-tag.# or #.#.#, got ${version}.`
+  packageVersion && validVersion.test(packageVersion),
+  `No version provided or version did not match Semantic Versioning, expected: #.#.#-tag.# or #.#.#, got '${packageVersion}'.`
 );
 
 const graph = readCachedProjectGraph();
@@ -39,7 +51,6 @@ invariant(
   project,
   `Could not find project "${name}" in the workspace. Is the project.json configured correctly?`
 );
-
 const outputPath = project.data?.targets?.build?.options?.outputPath;
 invariant(
   outputPath,
@@ -51,7 +62,7 @@ process.chdir(outputPath);
 // Updating the version in "package.json" before publishing
 try {
   const json = JSON.parse(readFileSync(`package.json`).toString());
-  json.version = version;
+  json.version = packageVersion;
   writeFileSync(`package.json`, JSON.stringify(json, null, 2));
 } catch (e) {
   console.error(
@@ -59,5 +70,10 @@ try {
   );
 }
 
-// Execute "npm publish" to publish
+// if (dryRun) {
+// console.log('With dry run only pack command was executed');
+// execSync(`npm pack --tag ${tag}`);
+// } else {
+console.log('Publishing...');
 execSync(`npm publish --access public --tag ${tag}`);
+// }
