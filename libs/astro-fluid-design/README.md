@@ -1,5 +1,7 @@
 # Astro Fluid Design
 
+![npm](https://img.shields.io/npm/v/%40rtech-public/astro-fluid-design)
+
 <img src="https://raw.githubusercontent.com/RolginRoman/rtech/main/assets/astrologo.svg" width="44" height="44" />
 
 Integration project that enables using [Utopia](https://utopia.fyi/) fluid design system
